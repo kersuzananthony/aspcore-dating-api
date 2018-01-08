@@ -4,6 +4,6 @@ namespace DatingAPI.Core
 {
     public interface IUnitOfWork
     {
-        Task CompleteAsync();
+        Task<bool> CompleteAsync();
     }
 }

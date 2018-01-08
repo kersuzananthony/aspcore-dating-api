@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text;
+using AutoMapper;
 using DatingAPI.Core;
 using DatingAPI.Data;
 using DatingAPI.Data.Repositories;
@@ -36,6 +37,9 @@ namespace DatingAPI
             // Repositories
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDatingRepository, DatingRepository>();
+            services.AddAutoMapper();
+            services.AddTransient<Seed>();
             
             // Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -51,14 +55,18 @@ namespace DatingAPI
                     };
                 });
             
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
         {
             if (env.IsDevelopment())
             {
+                seeder.SeedUsers();
                 app.UseDeveloperExceptionPage();
             }
             else

@@ -12,9 +12,9 @@ namespace DatingAPI.Data
             _context = context;
         }
         
-        public async Task CompleteAsync()
+        public async Task<bool> CompleteAsync()
         {
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

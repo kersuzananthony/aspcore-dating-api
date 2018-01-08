@@ -2,21 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace DatingAPI.Models
+namespace DatingAPI.Controllers.Response
 {
-    public class User
+    public class UserDetailResponse
     {
         public int Id { get; set; }
 
         public string Username { get; set; }
 
-        public byte[] PasswordHash { get; set; }
-
-        public byte[] PasswordSalt { get; set; }
-
         public string Gender { get; set; }
 
-        public DateTime DateOfBirth { get; set; }
+        public int Age { get; set; }
 
         public string KnownAs { get; set; }
         
@@ -34,11 +30,13 @@ namespace DatingAPI.Models
         
         public string City { get; set; }
         
-        public ICollection<Photo> Photos { get; set; }
+        public ICollection<PhotoResponse> Photos { get; set; }
         
-        public User()
+        public string PhotoUrl { get; set; }
+        
+        public UserDetailResponse()
         {
-            Photos = new Collection<Photo>();
+            Photos = new Collection<PhotoResponse>();
         }
     }
 }
