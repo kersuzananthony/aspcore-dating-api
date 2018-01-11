@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using DatingAPI.Controllers.Requests;
 using DatingAPI.Controllers.Response;
 using DatingAPI.Core;
 using DatingAPI.Models;
@@ -14,11 +17,13 @@ namespace DatingAPI.Controllers
     public class UsersController : Controller
     {
         private readonly IDatingRepository _datingRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UsersController(IDatingRepository datingRepository, IMapper mapper)
+        public UsersController(IDatingRepository datingRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _datingRepository = datingRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -44,6 +49,32 @@ namespace DatingAPI.Controllers
             var userDetailResponse = _mapper.Map<UserDetailResponse>(user);
             
             return Ok(userDetailResponse);
+        }
+
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var user = await _datingRepository.GetUser(id);
+
+            if (user == null)
+                return NotFound($"Could not find user with an ID of {id}");
+
+            if (user.Id != currentUserId)
+                return Forbid("You cannot update data from another user.");
+
+            _mapper.Map(request, user);
+
+            if (await _unitOfWork.CompleteAsync())
+            {
+                return NoContent();   
+            }
+            
+            throw new Exception($"Updating user ${id} failed on save.");
         }
     }
 }

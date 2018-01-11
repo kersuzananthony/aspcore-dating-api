@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
+using DatingAPI.Controllers.Requests;
 using DatingAPI.Controllers.Response;
 using DatingAPI.Extensions;
 using DatingAPI.Models;
@@ -11,6 +12,7 @@ namespace DatingAPI.Mapping
         public MappingProfile()
         {
             DomainToResourceMapping();
+            ResourceToDomainMapping();
         }
 
         private void DomainToResourceMapping()
@@ -29,6 +31,11 @@ namespace DatingAPI.Mapping
 
             CreateMap<Photo, PhotoResponse>();
             ;
+        }
+
+        private void ResourceToDomainMapping()
+        {
+            CreateMap<UserUpdateRequest, User>();
         }
     }
 }
