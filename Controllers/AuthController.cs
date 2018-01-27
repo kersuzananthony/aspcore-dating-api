@@ -4,7 +4,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingAPI.Controllers.Requests;
+using DatingAPI.Controllers.Response;
 using DatingAPI.Core;
 using DatingAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +22,14 @@ namespace DatingAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAuthRepository _authRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public AuthController(IConfiguration configuration, IAuthRepository authRepository, IUnitOfWork unitOfWork)
+        public AuthController(IConfiguration configuration, IAuthRepository authRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _configuration = configuration;
             _authRepository = authRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
         
         [HttpPost("register")]
@@ -58,15 +62,16 @@ namespace DatingAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await _authRepository.LoginAsync(loginRequest.Username.ToLower(), loginRequest.Password);
+            var userRepo = await _authRepository.LoginAsync(loginRequest.Username.ToLower(), loginRequest.Password);
 
-            if (user == null)
+            if (userRepo == null)
                 return Unauthorized();
 
 
-            var token = GenerateToken(user);
+            var token = GenerateToken(userRepo);
+            var user = _mapper.Map<UserListResponse>(userRepo);
 
-            return Ok(new {token});
+            return Ok(new {token, user});
         }
 
         private string GenerateToken(User user)

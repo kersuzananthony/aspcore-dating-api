@@ -5,6 +5,7 @@ using DatingAPI.Core;
 using DatingAPI.Data;
 using DatingAPI.Data.Repositories;
 using DatingAPI.Extensions;
+using DatingAPI.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -40,6 +41,7 @@ namespace DatingAPI
             services.AddScoped<IDatingRepository, DatingRepository>();
             services.AddAutoMapper();
             services.AddTransient<Seed>();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             
             // Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -66,7 +68,7 @@ namespace DatingAPI
         {
             if (env.IsDevelopment())
             {
-                seeder.SeedUsers();
+//                seeder.SeedUsers();
                 app.UseDeveloperExceptionPage();
             }
             else

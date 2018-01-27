@@ -30,12 +30,15 @@ namespace DatingAPI.Mapping
                     opts => { opts.ResolveUsing(source => source.DateOfBirth.CalculateAge()); });
 
             CreateMap<Photo, PhotoResponse>();
-            ;
+
+            CreateMap<Photo, PhotoDetailResponse>();
         }
 
         private void ResourceToDomainMapping()
         {
             CreateMap<UserUpdateRequest, User>();
+
+            CreateMap<PhotoCreationRequest, Photo>();
         }
     }
 }

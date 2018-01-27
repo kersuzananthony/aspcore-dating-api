@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DatingAPI.Models
+namespace DatingAPI.Controllers.Response
 {
-    public class Photo
+    public class PhotoDetailResponse
     {
         public Guid Id { get; set; }
 
@@ -15,9 +15,5 @@ namespace DatingAPI.Models
         public bool IsMain { get; set; }
 
         public string PublicId { get; set; }
-        
-        public User User { get; set; }
-        
-        public int UserId { get; set; }
     }
 }

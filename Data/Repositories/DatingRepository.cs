@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DatingAPI.Core;
 using DatingAPI.Models;
@@ -33,6 +35,16 @@ namespace DatingAPI.Data.Repositories
         public async Task<User> GetUser(int id)
         {
             return await _context.Users.Include(u => u.Photos).FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<Photo> GetPhoto(string id)
+        {
+            return await _context.Photos.FirstOrDefaultAsync(p => p.Id == new Guid(id));
+        }
+
+        public async Task<Photo> GetMainPhotoForUser(int userId)
+        {
+            return await _context.Photos.Where(p => p.UserId == userId).FirstOrDefaultAsync(p => p.IsMain);
         }
     }
 }
