@@ -44,7 +44,7 @@ namespace DatingAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var newUser = new User { Username = registerRequest.Username };
+            var newUser = _mapper.Map<User>(registerRequest);
 
             var createdUser = await _authRepository.RegisterAsync(newUser, registerRequest.Password);
             await _unitOfWork.CompleteAsync();
@@ -53,7 +53,7 @@ namespace DatingAPI.Controllers
                 return BadRequest("Cannot create user.");
 
 
-            return StatusCode(201);
+            return CreatedAtRoute("GetUser", new {controller = "Users", id = createdUser.Id}, _mapper.Map<UserDetailResponse>(createdUser));
         }
 
         [HttpPost("login")]

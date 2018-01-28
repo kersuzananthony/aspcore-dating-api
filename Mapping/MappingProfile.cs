@@ -39,6 +39,8 @@ namespace DatingAPI.Mapping
             CreateMap<UserUpdateRequest, User>();
 
             CreateMap<PhotoCreationRequest, Photo>();
+
+            CreateMap<RegisterRequest, User>();
         }
     }
 }
