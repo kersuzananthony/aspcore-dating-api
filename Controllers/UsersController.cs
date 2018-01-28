@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using DatingAPI.Controllers.Queries;
 using DatingAPI.Controllers.Requests;
 using DatingAPI.Controllers.Response;
 using DatingAPI.Core;
@@ -30,11 +31,11 @@ namespace DatingAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers(UserQuery query)
         {
-            var users = await _datingRepository.GetUsers();
+            var users = await _datingRepository.GetUsersAsync(query);
 
-            var userListResponse = _mapper.Map<IEnumerable<UserListResponse>>(users);
+            var userListResponse = _mapper.Map<QueryResultResponse<UserListResponse>>(users);
             
             return Ok(userListResponse);
         }
@@ -42,7 +43,7 @@ namespace DatingAPI.Controllers
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await _datingRepository.GetUser(id);
+            var user = await _datingRepository.GetUserAsync(id);
 
             if (user == null)
                 return NotFound();
@@ -61,7 +62,7 @@ namespace DatingAPI.Controllers
                 return BadRequest(ModelState);
 
             var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var user = await _datingRepository.GetUser(id);
+            var user = await _datingRepository.GetUserAsync(id);
 
             if (user == null)
                 return NotFound($"Could not find user with an ID of {id}");

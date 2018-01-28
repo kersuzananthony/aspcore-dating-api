@@ -16,7 +16,7 @@ namespace DatingAPI.Helpers
 
             var repo = resultContext.HttpContext.RequestServices.GetService<IDatingRepository>();
             var unitOfWork = resultContext.HttpContext.RequestServices.GetService<IUnitOfWork>();
-            var user = await repo.GetUser(userId);
+            var user = await repo.GetUserAsync(userId);
 
             user.LastActiveAt = DateTime.Now;
 

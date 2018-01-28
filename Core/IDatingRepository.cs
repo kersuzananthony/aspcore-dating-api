@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DatingAPI.Controllers.Queries;
 using DatingAPI.Models;
 
 namespace DatingAPI.Core
@@ -10,12 +11,12 @@ namespace DatingAPI.Core
 
         void Remove<T>(T entity) where T : class;
 
-        Task<IEnumerable<User>> GetUsers();
+        Task<QueryResult<User>> GetUsersAsync(UserQuery queryObject);
 
-        Task<User> GetUser(int id);
+        Task<User> GetUserAsync(int id);
 
-        Task<Photo> GetPhoto(string id);
+        Task<Photo> GetPhotoAsync(string id);
 
-        Task<Photo> GetMainPhotoForUser(int userId);
+        Task<Photo> GetMainPhotoForUserAsync(int userId);
     }
 }

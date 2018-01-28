@@ -46,7 +46,7 @@ namespace DatingAPI.Controllers
         [HttpGet("{id}", Name = "GetPhoto")]
         public async Task<IActionResult> GetPhoto(int userId, string id)
         {
-            var photoFromRepo = await _datingRepository.GetPhoto(id);
+            var photoFromRepo = await _datingRepository.GetPhotoAsync(id);
 
             if (photoFromRepo == null)
                 return NotFound();
@@ -60,7 +60,7 @@ namespace DatingAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             
-            var user = await _datingRepository.GetUser(userId);
+            var user = await _datingRepository.GetUserAsync(userId);
 
             if (user == null)
                 return BadRequest("Cannot find user.");
@@ -112,7 +112,7 @@ namespace DatingAPI.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Forbid("You cannot update this data.");
 
-            var photo = await this._datingRepository.GetPhoto(id);
+            var photo = await this._datingRepository.GetPhotoAsync(id);
 
             if (photo == null)
                 return NotFound();
@@ -122,7 +122,7 @@ namespace DatingAPI.Controllers
 
             photo.IsMain = true;
 
-            var currentMainPhoto = await _datingRepository.GetMainPhotoForUser(userId);
+            var currentMainPhoto = await _datingRepository.GetMainPhotoForUserAsync(userId);
 
             if (currentMainPhoto != null)
                 currentMainPhoto.IsMain = false;
@@ -141,7 +141,7 @@ namespace DatingAPI.Controllers
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Forbid("You cannot update this data.");
 
-            var photo = await this._datingRepository.GetPhoto(id);
+            var photo = await this._datingRepository.GetPhotoAsync(id);
 
             if (photo == null)
                 return NotFound();

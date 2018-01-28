@@ -32,6 +32,8 @@ namespace DatingAPI.Mapping
             CreateMap<Photo, PhotoResponse>();
 
             CreateMap<Photo, PhotoDetailResponse>();
+
+            CreateMap(typeof(QueryResult<>), typeof(QueryResultResponse<>));
         }
 
         private void ResourceToDomainMapping()
