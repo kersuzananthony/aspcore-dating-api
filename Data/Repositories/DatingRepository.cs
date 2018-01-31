@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DatingAPI.Controllers.Queries;
 using DatingAPI.Core;
@@ -14,6 +15,15 @@ namespace DatingAPI.Data.Repositories
     public class DatingRepository : IDatingRepository
     {
         private readonly DataContext _context;
+        
+        private static Dictionary<string, Expression<Func<User, object>>> GetUserColumnsMap()
+        {
+            return new Dictionary<string, Expression<Func<User, object>>>()
+            {
+                ["active"] = user => user.LastActiveAt,
+                ["created"] = user => user.CreatedAt
+            };
+        }
 
         public DatingRepository(DataContext context)
         {
@@ -33,9 +43,15 @@ namespace DatingAPI.Data.Repositories
         public async Task<QueryResult<User>> GetUsersAsync([FromQuery] UserQuery queryObject)
         {
             var query = _context.Users
+                .Where(u => u.Id != queryObject.UserId)
+                .Where(u => u.Gender == queryObject.Gender)
                 .Include(u => u.Photos)
                 .AsQueryable();
 
+            query = query.Where(u => u.DateOfBirth.CalculateAge() >= queryObject.MinAge && u.DateOfBirth.CalculateAge() <= queryObject.MaxAge);
+
+            query = query.ApplyOrdering(queryObject, GetUserColumnsMap());
+            
             var result = new QueryResult<User>
             {
                 TotalItems = await query.CountAsync()

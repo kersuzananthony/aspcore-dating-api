@@ -19,5 +19,17 @@ namespace DatingAPI.Controllers.Queries
             get => _pageSize;
             set => _pageSize = (value > MAX_SIZE || value <= 0) ? MAX_SIZE : value;
         }
+
+        public int UserId { get; set; }
+
+        public string Gender { get; set; }
+
+        public int MaxAge { get; set; } = 99;
+
+        public int MinAge { get; set; } = 18;
+
+        public string SortBy { get; set; }
+        
+        public bool IsSortAscending { get; set; }
     }
 }

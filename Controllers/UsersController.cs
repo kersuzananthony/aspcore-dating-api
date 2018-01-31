@@ -7,6 +7,7 @@ using DatingAPI.Controllers.Queries;
 using DatingAPI.Controllers.Requests;
 using DatingAPI.Controllers.Response;
 using DatingAPI.Core;
+using DatingAPI.Extensions;
 using DatingAPI.Helpers;
 using DatingAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +34,16 @@ namespace DatingAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers(UserQuery query)
         {
+            var currentUser = await this.GetCurrentUser();
+
+            if (currentUser == null)
+                return Unauthorized();
+
+            query.UserId = currentUser.Id;
+
+            if (string.IsNullOrEmpty(query.Gender))
+                query.Gender = currentUser.Gender == "female" ? "male" : "female";
+
             var users = await _datingRepository.GetUsersAsync(query);
 
             var userListResponse = _mapper.Map<QueryResultResponse<UserListResponse>>(users);
@@ -61,7 +72,7 @@ namespace DatingAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var currentUserId = this.GetCurrentUserId();
             var user = await _datingRepository.GetUserAsync(id);
 
             if (user == null)

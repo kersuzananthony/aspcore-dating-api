@@ -7,6 +7,7 @@ using CloudinaryDotNet.Actions;
 using DatingAPI.Controllers.Requests;
 using DatingAPI.Controllers.Response;
 using DatingAPI.Core;
+using DatingAPI.Extensions;
 using DatingAPI.Helpers;
 using DatingAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -109,7 +110,7 @@ namespace DatingAPI.Controllers
         [HttpPost("{id}/main")]
         public async Task<IActionResult> setMainPhoto(int userId, string id)
         {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (userId != this.GetCurrentUserId())
                 return Forbid("You cannot update this data.");
 
             var photo = await this._datingRepository.GetPhotoAsync(id);
@@ -138,7 +139,7 @@ namespace DatingAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePhoto(int userId, string id)
         {
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if (userId != this.GetCurrentUserId())
                 return Forbid("You cannot update this data.");
 
             var photo = await this._datingRepository.GetPhotoAsync(id);
