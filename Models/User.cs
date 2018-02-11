@@ -40,11 +40,17 @@ namespace DatingAPI.Models
 
         public ICollection<Like> Likees { get; set; }
         
+        public ICollection<Message> MessagesSent { get; set; }
+        
+        public ICollection<Message> MessagesReceived { get; set; }
+        
         public User()
         {
             Photos = new Collection<Photo>();
             Likers = new Collection<Like>();
             Likees = new Collection<Like>();
+            MessagesSent = new Collection<Message>();
+            MessagesReceived = new Collection<Message>();
         }
     }
 }
