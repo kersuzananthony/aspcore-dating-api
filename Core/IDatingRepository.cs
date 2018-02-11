@@ -18,5 +18,7 @@ namespace DatingAPI.Core
         Task<Photo> GetPhotoAsync(string id);
 
         Task<Photo> GetMainPhotoForUserAsync(int userId);
+
+        Task<Like> GetLikeAsync(int userId, int recipientId);
     }
 }

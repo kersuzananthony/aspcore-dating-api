@@ -35,10 +35,16 @@ namespace DatingAPI.Models
         public string City { get; set; }
         
         public ICollection<Photo> Photos { get; set; }
+
+        public ICollection<Like> Likers { get; set; }
+
+        public ICollection<Like> Likees { get; set; }
         
         public User()
         {
             Photos = new Collection<Photo>();
+            Likers = new Collection<Like>();
+            Likees = new Collection<Like>();
         }
     }
 }

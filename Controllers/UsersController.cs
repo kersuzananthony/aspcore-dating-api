@@ -90,5 +90,40 @@ namespace DatingAPI.Controllers
             
             throw new Exception($"Updating user ${id} failed on save.");
         }
+
+        [HttpPost("{userId}/like/{recipientId}")]
+        public async Task<IActionResult> LikeUser(int userId, int recipientId)
+        {
+            var currentUserId = this.GetCurrentUserId();
+
+            if (currentUserId != userId)
+                return Forbid();
+
+            if (userId == recipientId)
+                return BadRequest("You cannot like yourself.");
+
+            var like = await _datingRepository.GetLikeAsync(userId, recipientId);
+
+            if (like != null)
+                return BadRequest("You alreay liked this user");
+
+            if (await _datingRepository.GetUserAsync(recipientId) == null)
+                return NotFound();
+
+            var newLike = new Like
+            {
+                LikeeId = recipientId,
+                LikerId = userId
+            };
+            
+            _datingRepository.Add(newLike);
+
+            if (await _unitOfWork.CompleteAsync())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Failed to like user.");
+        }
     }
 }

@@ -31,5 +31,9 @@ namespace DatingAPI.Controllers.Queries
         public string SortBy { get; set; }
         
         public bool IsSortAscending { get; set; }
+
+        public bool Likees { get; set; } = false;
+
+        public bool Likers { get; set; } = false;
     }
 }

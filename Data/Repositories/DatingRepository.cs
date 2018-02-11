@@ -48,6 +48,16 @@ namespace DatingAPI.Data.Repositories
                 .Include(u => u.Photos)
                 .AsQueryable();
 
+            if (queryObject.Likers)
+            {
+                query = query.Where(u => u.Likers.Any(l => l.LikerId == u.Id));
+            }
+
+            if (queryObject.Likees)
+            {
+                query = query.Where(u => u.Likees.Any(l => l.LikeeId == u.Id));
+            }
+
             query = query.Where(u => u.DateOfBirth.CalculateAge() >= queryObject.MinAge && u.DateOfBirth.CalculateAge() <= queryObject.MaxAge);
 
             query = query.ApplyOrdering(queryObject, GetUserColumnsMap());
@@ -76,6 +86,11 @@ namespace DatingAPI.Data.Repositories
         public async Task<Photo> GetMainPhotoForUserAsync(int userId)
         {
             return await _context.Photos.Where(p => p.UserId == userId).FirstOrDefaultAsync(p => p.IsMain);
+        }
+
+        public async Task<Like> GetLikeAsync(int userId, int recipientId)
+        {
+            return await _context.Likes.FirstOrDefaultAsync(l => l.LikerId == userId && l.LikeeId == recipientId);
         }
     }
 }
