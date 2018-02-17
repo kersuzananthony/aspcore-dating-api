@@ -92,5 +92,57 @@ namespace DatingAPI.Data.Repositories
         {
             return await _context.Likes.FirstOrDefaultAsync(l => l.LikerId == userId && l.LikeeId == recipientId);
         }
+
+        public async Task<Message> GetMessageAsync(Guid id)
+        {
+            return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task<QueryResult<Message>> GetMessagesForUserAsync(MessageQuery queryObject)
+        {
+            var query = _context.Messages
+                .Include(m => m.Sender).ThenInclude(u => u.Photos)
+                .Include(m => m.Recipient).ThenInclude(u => u.Photos)
+                .AsQueryable();
+
+            switch (queryObject.MessageContainer.ToLower())
+            {
+                case "inbox":
+                    query = query.Where(m => m.RecipientId == queryObject.UserId);
+                    break;
+                case "outbox":
+                    query = query.Where(m => m.SenderId == queryObject.UserId);
+                    break;
+                default:
+                    query = query.Where(m => m.RecipientId == queryObject.UserId && m.IsRead == false);
+                    break;
+            }
+
+            query.ApplyOrdering(queryObject, new Dictionary<string, Expression<Func<Message, object>>>
+            {
+                ["sendAt"] = message => message.SendAt
+            });
+            
+            var result = new QueryResult<Message>
+            {
+                TotalItems = await query.CountAsync()
+            };
+
+            query = query.ApplyPaging(queryObject);
+            result.Results = await query.ToListAsync();
+
+            return result;
+        }
+
+        public async Task<IEnumerable<Message>> GetMessagesThreadAsync(int userId, int recipientId)
+        {
+            return await _context.Messages
+                .Include(m => m.Sender).ThenInclude(u => u.Photos)
+                .Include(m => m.Recipient).ThenInclude(u => u.Photos)
+                .Where(m => (m.RecipientId == userId && m.SenderId == recipientId) ||
+                            (m.RecipientId == recipientId && m.SenderId == userId))
+                .OrderByDescending(m => m.SendAt)
+                .ToListAsync();
+        }
     }
 }

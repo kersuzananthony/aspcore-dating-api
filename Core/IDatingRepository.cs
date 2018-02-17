@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DatingAPI.Controllers.Queries;
 using DatingAPI.Models;
@@ -20,5 +21,11 @@ namespace DatingAPI.Core
         Task<Photo> GetMainPhotoForUserAsync(int userId);
 
         Task<Like> GetLikeAsync(int userId, int recipientId);
+
+        Task<Message> GetMessageAsync(Guid id);
+
+        Task<QueryResult<Message>> GetMessagesForUserAsync(MessageQuery queryObject);
+
+        Task<IEnumerable<Message>> GetMessagesThreadAsync(int userId, int recipientId);
     }
 }

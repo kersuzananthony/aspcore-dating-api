@@ -2,7 +2,7 @@
 
 namespace DatingAPI.Controllers.Queries
 {
-    public class UserQuery : IQueryObject
+    public class MessageQuery : IQueryObject
     {
         private const int MaxSize = 20;
 
@@ -22,18 +22,10 @@ namespace DatingAPI.Controllers.Queries
 
         public int UserId { get; set; }
 
-        public string Gender { get; set; }
+        public string SortBy { get; set; } = "sendAt";
 
-        public int MaxAge { get; set; } = 99;
+        public bool IsSortAscending { get; set; } = false;
 
-        public int MinAge { get; set; } = 18;
-
-        public string SortBy { get; set; }
-        
-        public bool IsSortAscending { get; set; }
-
-        public bool Likees { get; set; } = false;
-
-        public bool Likers { get; set; } = false;
+        public string MessageContainer { get; set; } = "Unread";
     }
 }
